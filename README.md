@@ -1,141 +1,336 @@
-**Note:** This project is a fork of `opentelemetry-demo`. Thanks to the team and contributors for opensourcing this wonderful demo project. Definitely one of the best on internet.
+# E-Commerce DevOps Project 🛒
 
-<!-- markdownlint-disable-next-line -->
-# <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
+> **DevOps School Project** - Demonstrating modern DevOps practices with a microservices-based e-commerce application
 
-[![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
-[![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
-[![Commits](https://img.shields.io/github/commits-since/open-telemetry/opentelemetry-demo/latest?color=ff69b4&include_prereleases)](https://github.com/open-telemetry/opentelemetry-demo/graphs/commit-activity)
-[![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
-[![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-demo)](https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9247/badge)](https://www.bestpractices.dev/en/projects/9247)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://www.docker.com/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes)](https://kubernetes.io/)
 
-## Welcome to the OpenTelemetry Astronomy Shop Demo
+## 📋 Table of Contents
 
-This repository contains the OpenTelemetry Astronomy Shop, a microservice-based
-distributed system intended to illustrate the implementation of OpenTelemetry in
-a near real-world environment.
+- [Overview](#overview)
+- [Project Objectives](#project-objectives)
+- [Architecture](#architecture)
+- [Technologies Used](#technologies-used)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Deployment Options](#deployment-options)
+- [DevOps Practices Implemented](#devops-practices-implemented)
+- [Monitoring & Observability](#monitoring--observability)
+- [Learning Outcomes](#learning-outcomes)
+- [Troubleshooting](#troubleshooting)
+- [Acknowledgments](#acknowledgments)
 
-Our goals are threefold:
+## 🎯 Overview
 
-- Provide a realistic example of a distributed system that can be used to
-  demonstrate OpenTelemetry instrumentation and observability.
-- Build a base for vendors, tooling authors, and others to extend and
-  demonstrate their OpenTelemetry integrations.
-- Create a living example for OpenTelemetry contributors to use for testing new
-  versions of the API, SDK, and other components or enhancements.
+This project is a **DevOps-focused implementation** of a microservices-based e-commerce application, forked from the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo). It serves as a comprehensive demonstration of modern DevOps principles, containerization, orchestration, and observability practices.
 
-We've already made [huge
-progress](https://github.com/open-telemetry/opentelemetry-demo/blob/main/CHANGELOG.md),
-and development is ongoing. We hope to represent the full feature set of
-OpenTelemetry across its languages in the future.
+The application simulates a real-world online astronomy shop with multiple interconnected services, providing an ideal environment to practice and showcase DevOps skills.
 
-If you'd like to help (**which we would love**), check out our [contributing
-guidance](./CONTRIBUTING.md).
+## 🎓 Project Objectives
 
-If you'd like to extend this demo or maintain a fork of it, read our
-[fork guidance](https://opentelemetry.io/docs/demo/forking/).
+This school project demonstrates the following DevOps competencies:
 
-## Quick start
+1. **Containerization**: Dockerizing microservices for consistent deployment
+2. **Orchestration**: Managing multi-container applications with Docker Compose/Kubernetes
+3. **CI/CD**: Implementing continuous integration and deployment pipelines
+4. **Monitoring**: Setting up comprehensive observability with OpenTelemetry
+5. **Infrastructure as Code**: Managing infrastructure through declarative configuration
+6. **Microservices Architecture**: Understanding distributed system design and communication
 
-You can be up and running with the demo in a few minutes. Check out the docs for
-your preferred deployment method:
+## 🏗️ Architecture
 
-- [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
-- [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
+The application consists of multiple microservices written in different programming languages, demonstrating polyglot architecture:
 
-## Documentation
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Frontend (Next.js)                    │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+     ┌───────────────┼───────────────────────┐
+     │               │                       │
+┌────▼────┐   ┌─────▼──────┐   ┌───────────▼────────┐
+│ Cart    │   │ Checkout   │   │ Product Catalog    │
+│ Service │   │ Service    │   │ Service            │
+└─────────┘   └────────────┘   └────────────────────┘
+     │               │                       │
+     └───────────────┼───────────────────────┘
+                     │
+            ┌────────▼────────┐
+            │  Payment Service │
+            └─────────────────┘
+```
 
-For detailed documentation, see [Demo Documentation][docs]. If you're curious
-about a specific feature, the [docs landing page][docs] can point you in the
-right direction.
+### Microservices Components:
 
-## Demos featuring the Astronomy Shop
+- **Frontend**: Web UI for customers (Next.js/React)
+- **Cart Service**: Shopping cart functionality
+- **Product Catalog Service**: Product inventory and details
+- **Checkout Service**: Order processing
+- **Payment Service**: Payment processing simulation
+- **Recommendation Service**: Product recommendations
+- **Ad Service**: Advertisement management
+- **Email Service**: Email notifications
+- **Shipping Service**: Shipping calculations
+- **Currency Service**: Currency conversion
 
-We welcome any vendor to fork the project to demonstrate their services and
-adding a link below. The community is committed to maintaining the project and
-keeping it up to date for you.
+## 🛠️ Technologies Used
 
-|                           |                |                                  |
-|---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [OpenSearch]                     |
-| [AppDynamics]             | [Google Cloud] | [Sentry]                         |
-| [Aspecto]                 | [Grafana Labs] | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Guance]       | [Splunk]                         |
-| [Axoflow]                 | [Honeycomb.io] | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Instana]      | [TelemetryHub]                   |
-| [Coralogix]               | [Kloudfuse]    | [Teletrace]                      |
-| [Dash0]                   | [Liatrio]      | [Tracetest]                      |
-| [Datadog]                 | [Logz.io]      | [Uptrace]                        |
-| [Dynatrace]               | [New Relic]    |                                  |
+### Core Technologies:
+- **Languages**: Go, Java, Python, Node.js, .NET, PHP, Ruby
+- **Container Runtime**: Docker
+- **Orchestration**: Docker Compose, Kubernetes
+- **Observability**: OpenTelemetry, Jaeger, Prometheus, Grafana
+- **Service Mesh**: Optional (Istio/Linkerd)
+- **Databases**: Redis (cache), PostgreSQL
 
-## Contributing
+### DevOps Tools:
+- **Version Control**: Git, GitHub
+- **CI/CD**: GitHub Actions (configurable)
+- **Infrastructure as Code**: Docker Compose files, Kubernetes manifests
+- **Monitoring**: OpenTelemetry Collector, Prometheus
+- **Logging**: Fluent Bit, OpenTelemetry
 
-To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
-documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
-Monday at 8:30 AM PST and anyone is welcome.
+## 📦 Prerequisites
 
-## Project leadership
+Before running this project, ensure you have the following installed:
 
-[Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer)
-([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
+- **Docker Desktop** (v20.10+) or Docker Engine with Docker Compose
+- **Git** for version control
+- **kubectl** (for Kubernetes deployment)
+- **Helm** (optional, for Kubernetes deployment)
+- Minimum **6GB RAM** allocated to Docker
+- Minimum **4 CPU cores** recommended
 
-- [Juliano Costa](https://github.com/julianocosta89), Datadog
-- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
-- [Pierre Tessier](https://github.com/puckpuck), Honeycomb
+### System Requirements:
+```
+Minimum:
+- RAM: 6GB
+- CPU: 4 cores
+- Disk: 20GB free space
 
-[Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
-([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
+Recommended:
+- RAM: 8GB+
+- CPU: 6+ cores
+- Disk: 30GB+ free space
+```
 
-- [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
-- [Penghan Wang](https://github.com/wph95), AppDynamics
-- [Reiley Yang](https://github.com/reyang), Microsoft
-- [Roger Coll](https://github.com/rogercoll), Elastic
-- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
+## 🚀 Quick Start
 
-Emeritus:
+### Option 1: Docker Compose (Recommended for Development)
 
-- [Austin Parker](https://github.com/austinlparker)
-- [Carter Socha](https://github.com/cartersocha)
-- [Michael Maxwell](https://github.com/mic-max)
-- [Morgan McLean](https://github.com/mtwo)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Munyat/Ecommerce_Devops_Project.git
+   cd Ecommerce_Devops_Project
+   ```
 
-### Thanks to all the people who have contributed
+2. **Start the application**
+   ```bash
+   docker compose up -d
+   ```
 
-[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo)](https://github.com/open-telemetry/opentelemetry-demo/graphs/contributors)
+3. **Access the application**
+   - Frontend: http://localhost:8080
+   - Jaeger UI: http://localhost:16686
+   - Grafana: http://localhost:3000
+   - Prometheus: http://localhost:9090
 
-[docs]: https://opentelemetry.io/docs/demo/
+4. **Stop the application**
+   ```bash
+   docker compose down
+   ```
 
-<!-- Links for Demos featuring the Astronomy Shop section -->
+### Option 2: Kubernetes
 
-[AlibabaCloud LogService]: https://github.com/aliyun-sls/opentelemetry-demo
-[AppDynamics]: https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/
-[Aspecto]: https://github.com/aspecto-io/opentelemetry-demo
-[Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
-[Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
-[Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
-[Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
-[Dash0]: https://github.com/dash0hq/opentelemetry-demo
-[Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
-[Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
-[Elastic]: https://github.com/elastic/opentelemetry-demo
-[Google Cloud]: https://github.com/GoogleCloudPlatform/opentelemetry-demo
-[Grafana Labs]: https://github.com/grafana/opentelemetry-demo
-[Guance]: https://github.com/GuanceCloud/opentelemetry-demo
-[Honeycomb.io]: https://github.com/honeycombio/opentelemetry-demo
-[Instana]: https://github.com/instana/opentelemetry-demo
-[Kloudfuse]: https://github.com/kloudfuse/opentelemetry-demo
-[Liatrio]: https://github.com/liatrio/opentelemetry-demo
-[Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
-[New Relic]: https://github.com/newrelic/opentelemetry-demo
-[OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
-[Sentry]: https://github.com/getsentry/opentelemetry-demo
-[ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
-[Splunk]: https://github.com/signalfx/opentelemetry-demo
-[Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
-[TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
-[Teletrace]: https://github.com/teletrace/opentelemetry-demo
-[Tracetest]: https://github.com/kubeshop/opentelemetry-demo
-[Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
+1. **Apply Kubernetes manifests**
+   ```bash
+   kubectl apply -f kubernetes/
+   ```
+
+2. **Verify deployment**
+   ```bash
+   kubectl get pods
+   kubectl get services
+   ```
+
+3. **Access via port-forward**
+   ```bash
+   kubectl port-forward svc/frontend 8080:8080
+   ```
+
+## 🌐 Deployment Options
+
+### Local Development
+- Docker Compose for rapid iteration
+- Hot-reload enabled for frontend services
+
+### Production-like Environment
+- Kubernetes cluster (minikube, kind, or cloud providers)
+- Helm charts for streamlined deployment
+- Ingress controllers for routing
+
+### Cloud Deployment
+- AWS EKS, Google GKE, or Azure AKS
+- Cloud-native monitoring integration
+- Auto-scaling configurations
+
+## 🔧 DevOps Practices Implemented
+
+### 1. Containerization
+- Each microservice runs in its own Docker container
+- Multi-stage builds for optimized image sizes
+- Health checks for container reliability
+
+### 2. Infrastructure as Code
+- Declarative configuration with Docker Compose
+- Kubernetes manifests for production deployment
+- Version-controlled infrastructure
+
+### 3. Observability
+- **Distributed Tracing**: Full request tracing across services
+- **Metrics Collection**: Performance and business metrics
+- **Logging**: Centralized log aggregation
+- **Dashboards**: Pre-configured Grafana dashboards
+
+### 4. Service Communication
+- REST APIs for synchronous communication
+- gRPC for high-performance inter-service calls
+- Message queues for asynchronous operations
+
+### 5. Security Best Practices
+- Non-root containers
+- Minimal base images
+- Network policies (Kubernetes)
+- Secret management
+
+## 📊 Monitoring & Observability
+
+### OpenTelemetry Integration
+This project showcases complete OpenTelemetry instrumentation:
+
+- **Traces**: End-to-end request tracing
+- **Metrics**: Performance metrics collection
+- **Logs**: Structured logging across services
+
+### Accessing Monitoring Tools
+
+| Tool | URL | Purpose |
+|------|-----|---------|
+| Jaeger | http://localhost:16686 | Distributed tracing |
+| Grafana | http://localhost:3000 | Metrics visualization |
+| Prometheus | http://localhost:9090 | Metrics storage & querying |
+
+### Key Metrics to Monitor
+- Request latency across services
+- Error rates and HTTP status codes
+- Service dependencies and call graphs
+- Database query performance
+- Cache hit/miss ratios
+
+## 📚 Learning Outcomes
+
+By working with this project, you will gain hands-on experience with:
+
+1. **Microservices Architecture**
+   - Understanding service decomposition
+   - Inter-service communication patterns
+   - Handling distributed transactions
+
+2. **Containerization**
+   - Writing production-ready Dockerfiles
+   - Optimizing container images
+   - Managing container lifecycles
+
+3. **Orchestration**
+   - Deploying multi-container applications
+   - Service discovery and load balancing
+   - Scaling strategies
+
+4. **Observability**
+   - Implementing distributed tracing
+   - Collecting and visualizing metrics
+   - Debugging distributed systems
+
+5. **DevOps Workflows**
+   - CI/CD pipeline design
+   - Automated testing strategies
+   - Deployment automation
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Services not starting**
+```bash
+# Check container logs
+docker compose logs [service-name]
+
+# Verify resource allocation
+docker stats
+```
+
+**Port conflicts**
+```bash
+# Check if ports are in use
+lsof -i :<port-number>
+
+# Modify port mappings in docker-compose.yml
+```
+
+**Out of memory errors**
+```bash
+# Increase Docker memory allocation in Docker Desktop settings
+# Or scale down services for development:
+docker compose up -d frontend cartservice productcatalogservice
+```
+
+**Image pull errors**
+```bash
+# Pull images explicitly
+docker compose pull
+
+# Build images locally
+docker compose build
+```
+
+## 📖 Additional Resources
+
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
+- [Docker Documentation](https://docs.docker.com/)
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [Microservices Patterns](https://microservices.io/patterns/)
+
+## 🙏 Acknowledgments
+
+This project is a fork of the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo). 
+
+Special thanks to:
+- The OpenTelemetry community for creating this excellent demo
+- All contributors who maintain the upstream project
+- The DevOps community for best practices and patterns
+
+## 📄 License
+
+This project inherits the Apache 2.0 License from the upstream OpenTelemetry Demo project.
+
+---
+
+## 🎓 Project Information
+
+**Course**: DevOps Engineering  
+**Student**: [Your Name]  
+**Institution**: [Your School/University]  
+**Academic Year**: [Year]
+
+### Project Focus Areas
+- ✅ Containerization with Docker
+- ✅ Container orchestration
+- ✅ Microservices architecture
+- ✅ Observability and monitoring
+- ✅ Infrastructure as Code
+- ✅ CI/CD pipeline implementation
+
+---
+
+**Made with ❤️ for learning DevOps**
