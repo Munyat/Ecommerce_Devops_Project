@@ -1,327 +1,201 @@
-# E-Commerce DevOps Project 🛒
+# E‑Commerce DevOps Microservices Project
 
-> **DevOps School Project** - Demonstrating modern DevOps practices with a microservices-based e-commerce application
+> A polyglot microservices e‑commerce app instrumented with OpenTelemetry. Built for demonstrating containerization, orchestration, and observability in a school project.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://www.docker.com/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes)](https://kubernetes.io/)
 
-## 📋 Table of Contents
+## Overview
 
-- [Overview](#overview)
-- [Project Objectives](#project-objectives)
-- [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Deployment Options](#deployment-options)
-- [DevOps Practices Implemented](#devops-practices-implemented)
-- [Monitoring & Observability](#monitoring--observability)
-- [Learning Outcomes](#learning-outcomes)
-- [Troubleshooting](#troubleshooting)
-- [Acknowledgments](#acknowledgments)
+This repository assembles a production‑style demo of an online store as a distributed system. It is based on the OpenTelemetry Demo and augmented for coursework to showcase:
 
-## 🎯 Overview
+- Containerized microservices across multiple languages
+- Centralized tracing, metrics, and logs with OpenTelemetry
+- Local orchestration via Docker Compose (with an Envoy gateway)
+- Optional Kubernetes manifests
+- Load testing and trace‑based tests
 
-This project is a **DevOps-focused implementation** of a microservices-based e-commerce application, forked from the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo). It serves as a comprehensive demonstration of modern DevOps principles, containerization, orchestration, and observability practices.
-
-The application simulates a real-world online astronomy shop with multiple interconnected services, providing an ideal environment to practice and showcase DevOps skills.
-
-## 🎓 Project Objectives
-
-This school project demonstrates the following DevOps competencies:
-
-1. **Containerization**: Dockerizing microservices for consistent deployment
-2. **Orchestration**: Managing multi-container applications with Docker Compose/Kubernetes
-3. **CI/CD**: Implementing continuous integration and deployment pipelines
-4. **Monitoring**: Setting up comprehensive observability with OpenTelemetry
-5. **Infrastructure as Code**: Managing infrastructure through declarative configuration
-6. **Microservices Architecture**: Understanding distributed system design and communication
-
-## 🏗️ Architecture
-
-The application consists of multiple microservices written in different programming languages, demonstrating polyglot architecture:
+## Architecture (high level)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (Next.js)                    │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-     ┌───────────────┼───────────────────────┐
-     │               │                       │
-┌────▼────┐   ┌─────▼──────┐   ┌───────────▼────────┐
-│ Cart    │   │ Checkout   │   │ Product Catalog    │
-│ Service │   │ Service    │   │ Service            │
-└─────────┘   └────────────┘   └────────────────────┘
-     │               │                       │
-     └───────────────┼───────────────────────┘
-                     │
-            ┌────────▼────────┐
-            │  Payment Service │
-            └─────────────────┘
+Browser ──► Frontend (Next.js) ──► Frontend Proxy (Envoy)
+                                  ├─► Cart (.NET) ──► Valkey (cache)
+                                  ├─► Checkout (Go) ──► Kafka ──► Accounting (.NET)/Fraud (Java)
+                                  ├─► Product Catalog (Go)
+                                  ├─► Recommendation (Python)
+                                  ├─► Currency (C++)
+                                  ├─► Payment (Node.js)
+                                  ├─► Shipping (Go) ──► Quote (PHP)
+                                  └─► Email (Ruby)
+
+Telemetry: OpenTelemetry Collector ──► Jaeger, Prometheus, Grafana, OpenSearch
 ```
 
-### Microservices Components:
+## Tech stack
 
-- **Frontend**: Web UI for customers (Next.js/React)
-- **Cart Service**: Shopping cart functionality
-- **Product Catalog Service**: Product inventory and details
-- **Checkout Service**: Order processing
-- **Payment Service**: Payment processing simulation
-- **Recommendation Service**: Product recommendations
-- **Ad Service**: Advertisement management
-- **Email Service**: Email notifications
-- **Shipping Service**: Shipping calculations
-- **Currency Service**: Currency conversion
+- Languages: TypeScript/Node.js, Go, Python, Java, C#, C++, PHP, Ruby
+- Orchestration: Docker Compose; optional Kubernetes
+- Gateway: Envoy (`frontend-proxy`)
+- Data/infra: PostgreSQL (tests), Valkey (Redis‑compatible), Kafka
+- Observability: OpenTelemetry Collector, Jaeger, Prometheus, Grafana, OpenSearch
+- Load testing: Locust
 
-## 🛠️ Technologies Used
+## Prerequisites
 
-### Core Technologies:
-- **Languages**: Go, Java, Python, Node.js, .NET, PHP, Ruby
-- **Container Runtime**: Docker
-- **Orchestration**: Docker Compose, Kubernetes
-- **Observability**: OpenTelemetry, Jaeger, Prometheus, Grafana
-- **Service Mesh**: Optional (Istio/Linkerd)
-- **Databases**: Redis (cache), PostgreSQL
+- Docker (Engine) and Docker Compose
+- Make (recommended for helper commands)
+- 8 GB+ RAM and 4+ CPU cores recommended
 
-### DevOps Tools:
-- **Version Control**: Git, GitHub
-- **CI/CD**: GitHub Actions (configurable)
-- **Infrastructure as Code**: Docker Compose files, Kubernetes manifests
-- **Monitoring**: OpenTelemetry Collector, Prometheus
-- **Logging**: Fluent Bit, OpenTelemetry
+## Quick start (Docker Compose)
 
-## 📦 Prerequisites
+The Makefile wires the correct env files and ports.
 
-Before running this project, ensure you have the following installed:
+- Start full demo:
+  ```bash
+  make start
+  ```
+- Start minimal demo (lighter resource usage):
+  ```bash
+  make start-minimal
+  ```
+- Stop and clean up:
+  ```bash
+  make stop
+  ```
 
-- **Docker Desktop** (v20.10+) or Docker Engine with Docker Compose
-- **Git** for version control
-- **kubectl** (for Kubernetes deployment)
-- **Helm** (optional, for Kubernetes deployment)
-- Minimum **6GB RAM** allocated to Docker
-- Minimum **4 CPU cores** recommended
+After start, open:
 
-### System Requirements:
-```
-Minimum:
-- RAM: 6GB
-- CPU: 4 cores
-- Disk: 20GB free space
+- Demo UI: `http://localhost:8080`
+- Jaeger UI: `http://localhost:8080/jaeger/ui`
+- Grafana: `http://localhost:8080/grafana/`
+- Load Generator UI (Locust): `http://localhost:8080/loadgen/`
+- Feature Flag UI: `http://localhost:8080/feature/`
 
-Recommended:
-- RAM: 8GB+
-- CPU: 6+ cores
-- Disk: 30GB+ free space
-```
+Advanced (direct ports): Prometheus `http://localhost:9090`, Jaeger `16686`, Grafana `3000` (when published).
 
-## 🚀 Quick Start
+## Services (selected)
 
-### Option 1: Docker Compose (Recommended for Development)
+- Frontend (Next.js/TypeScript) – `src/frontend` – port 8080
+- Frontend Proxy (Envoy) – `src/frontend-proxy` – port 8080 (gateway)
+- Cart (.NET) – `src/cart` – port 7070
+- Checkout (Go) – `src/checkout` – port 5050
+- Product Catalog (Go) – `src/product-catalog` – port 3550
+- Recommendation (Python) – `src/recommendation` – port 9001
+- Currency (C++) – `src/currency` – port 7001
+- Payment (Node.js) – `src/payment` – port 50051
+- Shipping (Go) – `src/shipping` – port 50050
+- Quote (PHP) – `src/quote` – port 8090
+- Email (Ruby) – `src/email` – port 6060
+- Ad (Java) – `src/ad` – port 9555
+- Image Provider – `src/image-provider` – port 8081
+- Supporting: Kafka, Valkey, Postgres
+- Observability: `src/otel-collector`, `src/grafana`, `src/prometheus`, `src/opensearch`
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Munyat/Ecommerce_Devops_Project.git
-   cd Ecommerce_Devops_Project
-   ```
+All service ports and addresses are defined in `.env`.
 
-2. **Start the application**
-   ```bash
-   docker compose up -d
-   ```
+## Common workflows
 
-3. **Access the application**
-   - Frontend: http://localhost:8080
-   - Jaeger UI: http://localhost:16686
-   - Grafana: http://localhost:3000
-   - Prometheus: http://localhost:9090
+- Rebuild one service and restart it:
+  ```bash
+  make redeploy SERVICE=frontend
+  ```
+- Restart a running service without rebuilding:
+  ```bash
+  make restart SERVICE=frontend
+  ```
+- Build all images (honors platform tweaks):
+  ```bash
+  make build
+  ```
 
-4. **Stop the application**
-   ```bash
-   docker compose down
-   ```
+## Frontend local development
 
-### Option 2: Kubernetes
-
-1. **Apply Kubernetes manifests**
-   ```bash
-   kubectl apply -f kubernetes/
-   ```
-
-2. **Verify deployment**
-   ```bash
-   kubectl get pods
-   kubectl get services
-   ```
-
-3. **Access via port-forward**
-   ```bash
-   kubectl port-forward svc/frontend 8080:8080
-   ```
-
-## 🌐 Deployment Options
-
-### Local Development
-- Docker Compose for rapid iteration
-- Hot-reload enabled for frontend services
-
-### Production-like Environment
-- Kubernetes cluster (minikube, kind, or cloud providers)
-- Helm charts for streamlined deployment
-- Ingress controllers for routing
-
-### Cloud Deployment
-- AWS EKS, Google GKE, or Azure AKS
-- Cloud-native monitoring integration
-- Auto-scaling configurations
-
-## 🔧 DevOps Practices Implemented
-
-### 1. Containerization
-- Each microservice runs in its own Docker container
-- Multi-stage builds for optimized image sizes
-- Health checks for container reliability
-
-### 2. Infrastructure as Code
-- Declarative configuration with Docker Compose
-- Kubernetes manifests for production deployment
-- Version-controlled infrastructure
-
-### 3. Observability
-- **Distributed Tracing**: Full request tracing across services
-- **Metrics Collection**: Performance and business metrics
-- **Logging**: Centralized log aggregation
-- **Dashboards**: Pre-configured Grafana dashboards
-
-### 4. Service Communication
-- REST APIs for synchronous communication
-- gRPC for high-performance inter-service calls
-- Message queues for asynchronous operations
-
-### 5. Security Best Practices
-- Non-root containers
-- Minimal base images
-- Network policies (Kubernetes)
-- Secret management
-
-## 📊 Monitoring & Observability
-
-### OpenTelemetry Integration
-This project showcases complete OpenTelemetry instrumentation:
-
-- **Traces**: End-to-end request tracing
-- **Metrics**: Performance metrics collection
-- **Logs**: Structured logging across services
-
-### Accessing Monitoring Tools
-
-| Tool | URL | Purpose |
-|------|-----|---------|
-| Jaeger | http://localhost:16686 | Distributed tracing |
-| Grafana | http://localhost:3000 | Metrics visualization |
-| Prometheus | http://localhost:9090 | Metrics storage & querying |
-
-### Key Metrics to Monitor
-- Request latency across services
-- Error rates and HTTP status codes
-- Service dependencies and call graphs
-- Database query performance
-- Cache hit/miss ratios
-
-## 📚 Learning Outcomes
-
-By working on this project, I gained hands-on experience with:
-
-1. **Microservices Architecture**
-   - Understanding service decomposition
-   - Inter-service communication patterns
-   - Handling distributed transactions
-
-2. **Containerization**
-   - Writing production-ready Dockerfiles
-   - Optimizing container images
-   - Managing container lifecycles
-
-3. **Orchestration**
-   - Deploying multi-container applications
-   - Service discovery and load balancing
-   - Scaling strategies
-
-4. **Observability**
-   - Implementing distributed tracing
-   - Collecting and visualizing metrics
-   - Debugging distributed systems
-
-5. **DevOps Workflows**
-   - CI/CD pipeline design
-   - Automated testing strategies
-   - Deployment automation
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Services not starting**
+From repository root, start a dev shell with service ports exposed, then run Next.js dev server inside:
 ```bash
-# Check container logs
-docker compose logs [service-name]
+# open a container with volumes mounted
+docker compose run --service-ports \
+  -e NODE_ENV=development \
+  --volume "$(pwd)/src/frontend:/app" \
+  --volume "$(pwd)/pb:/app/pb" \
+  --user node \
+  --entrypoint sh frontend
 
-# Verify resource allocation
-docker stats
+# inside the container
+npm install
+npm run dev
 ```
+The app will be available at `http://localhost:8080`.
 
-**Port conflicts**
-```bash
-# Check if ports are in use
-lsof -i :<port-number>
+## Protobufs
 
-# Modify port mappings in docker-compose.yml
-```
+Some services share gRPC/proto definitions stored in `pb/`.
+- Regenerate code (inside Docker):
+  ```bash
+  make docker-generate-protobuf
+  ```
 
-**Out of memory errors**
-```bash
-# Increase Docker memory allocation in Docker Desktop settings
-# Or scale down services for development:
-docker compose up -d frontend cartservice productcatalogservice
-```
+## Testing
 
-**Image pull errors**
-```bash
-# Pull images explicitly
-docker compose pull
+- Run Cypress (frontend) and trace‑based tests:
+  ```bash
+  make run-tests
+  ```
+- Run only trace‑based tests (by service folder name under `test/tracetesting/`):
+  ```bash
+  make run-tracetesting
+  # or a subset
+  make run-tracetesting SERVICES_TO_TEST="ad payment"
+  ```
 
-# Build images locally
-docker compose build
-```
+## Kubernetes (optional)
 
-## 📖 Additional Resources
+- Generate manifests (uses upstream Helm chart):
+  ```bash
+  make generate-kubernetes-manifests
+  ```
+- Apply:
+  ```bash
+  kubectl apply -f kubernetes/
+  ```
+- Port‑forward the frontend:
+  ```bash
+  kubectl port-forward svc/frontend 8080:8080
+  ```
 
-- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
-- [Docker Documentation](https://docs.docker.com/)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [Microservices Patterns](https://microservices.io/patterns/)
+## Configuration
 
+Most configuration lives in `.env` (and `.env.override` for local overrides). Key values:
 
-## 📄 License
+- `FRONTEND_PORT=8080` – demo UI port
+- `OTEL_COLLECTOR_PORT_GRPC=4317`, `OTEL_COLLECTOR_PORT_HTTP=4318`
+- Service addresses like `CART_ADDR`, `CHECKOUT_ADDR`, etc.
 
-This project inherits the Apache 2.0 License.
+ARM64 macOS note: `_JAVA_OPTIONS=-XX:UseSVE=0` is applied from `.env.arm64` automatically by the Makefile when needed.
 
----
+## Troubleshooting
 
-## 🎓 Project Information
+- Check logs:
+  ```bash
+  docker compose logs -f <service>
+  ```
+- Resource pressure: use `make start-minimal`, or allocate more RAM/CPU to Docker
+- Port conflicts: stop previous runs with `make stop`, then retry
+- Rebuild generated protos if working tree shows untracked generated files:
+  ```bash
+  make docker-generate-protobuf
+  ```
 
-**Course**: DevOps Engineering  
-**Student**: Brian Kipkirui Cheruiyot
-**Institution**: Nairobi Devops/Strathmore university
+## Attribution
 
-### Project Focus Areas
-- ✅ Containerization with Docker
-- ✅ Container orchestration
-- ✅ Microservices architecture
-- ✅ Observability and monitoring
-- ✅ Infrastructure as Code
-- ✅ CI/CD pipeline implementation
+This project is adapted from the OpenTelemetry Demo. See OpenTelemetry docs for guidance on traces, metrics, and logs.
 
----
+## License
 
-**Made with ❤️ for learning DevOps**
+Apache 2.0
+
+## Course information
+
+- Course: DevOps Engineering
+- Student: Brian Kipkirui Cheruiyot
+- Institution: Nairobi Devops / Strathmore University
+
+— Made for learning DevOps with love and telemetry.
