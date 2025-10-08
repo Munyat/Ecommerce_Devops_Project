@@ -301,18 +301,10 @@ docker compose build
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [Microservices Patterns](https://microservices.io/patterns/)
 
-## 🙏 Acknowledgments
-
-This project is a fork of the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo). 
-
-Special thanks to:
-- The OpenTelemetry community for creating this excellent demo
-- All contributors who maintain the upstream project
-- The DevOps community for best practices and patterns
 
 ## 📄 License
 
-This project inherits the Apache 2.0 License from the upstream OpenTelemetry Demo project.
+This project inherits the Apache 2.0 License.
 
 ---
 
