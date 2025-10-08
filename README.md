@@ -230,7 +230,7 @@ This project showcases complete OpenTelemetry instrumentation:
 
 ## 📚 Learning Outcomes
 
-By working with this project, you will gain hands-on experience with:
+By working on this project, I gained hands-on experience with:
 
 1. **Microservices Architecture**
    - Understanding service decomposition
@@ -319,9 +319,8 @@ This project inherits the Apache 2.0 License from the upstream OpenTelemetry Dem
 ## 🎓 Project Information
 
 **Course**: DevOps Engineering  
-**Student**: [Your Name]  
-**Institution**: [Your School/University]  
-**Academic Year**: [Year]
+**Student**: Brian Kipkirui Cheruiyot
+**Institution**: Nairobi Devops/Strathmore university
 
 ### Project Focus Areas
 - ✅ Containerization with Docker
