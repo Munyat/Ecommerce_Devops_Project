@@ -1,0 +1,3 @@
+[submodule "EKS"]
+	path = EKS
+	url = https://github.com/Munyat/Ecommerce_Devops_Project.git
